@@ -27,7 +27,7 @@ class Mailing(object):
         self.creating_list()
         self.attaching()
         self.sending()
-
+        self.delete_files()
 
 
 
@@ -65,9 +65,16 @@ class Mailing(object):
         for file in os.listdir(self.folder):
             a = os.path.abspath(os.path.join(self.folder, file)).replace('\\','/')
             self.files.append(a)
+        # only if your program file is inside the same folder. You dont want to send it:
+        self.files.remove('C:/Path/path/Desktop/zalacznik/program.py')
+            
+            
+    def delete_files(self):
+        for i in range(len(self.files)):
+            os.remove(self.files[i])
 
 
 
 
 
-Mailowanie()
+Mailing()
