@@ -1,0 +1,73 @@
+import smtplib
+from email.message import EmailMessage
+import imghdr
+import os
+
+
+class Mailing(object):
+
+    def __init__(self):
+        # logging
+        self.EMAIL_ADDRESS = 'your_email@gmail.com'
+        self.EMAIL_PASSWORD = 'your_password'
+        self.RECEIVER_ADDRESS = 'receiver_email@gmail.com'
+        # message
+        self.msg = EmailMessage()
+        self.msg['subject'] = 'any subject'
+        self.msg['from'] = self.EMAIL_ADDRESS
+        self.msg['to'] = self.RECEIVER_ADDRESS
+        self.msg.set_content('any text')
+        # attachments folder
+        self.folder = 'C:/Path/path/Desktop/folder'
+        # list of attachments
+        self.files = []
+
+
+
+        self.creating_list()
+        self.attaching()
+        self.sending()
+
+
+
+
+
+    def sending(self):
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+            smtp.send_message(self.msg)
+    
+
+
+
+    def attaching(self):
+        for file in self.files:
+            a = os.path.abspath(os.path.join(self.folder, file))
+            b = imghdr.what(a)
+            if 'None' in str(b):
+                with open(file, 'rb') as f:
+                    file_data = f.read()
+                    file_name = f.name 
+                self.msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
+                
+            else:
+                with open(file, 'rb') as f:
+                    file_data = f.read()
+                    file_type = imghdr.what(f.name)
+                    file_name = f.name 
+                self.msg.add_attachment(file_data, maintype='image', subtype='file.type', filename=file_name)
+
+
+        
+
+    def creating_list(self):
+        a = ''
+        for file in os.listdir(self.folder):
+            a = os.path.abspath(os.path.join(self.folder, file)).replace('\\','/')
+            self.files.append(a)
+
+
+
+
+
+Mailowanie()
